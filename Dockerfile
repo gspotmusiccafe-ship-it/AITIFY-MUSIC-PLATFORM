@@ -1,6 +1,6 @@
 FROM php:8.2-apache
 
-# 1. Install System Dependencies & Core PHP Extensions (Including pcntl and ftp)
+# 1. Install System Dependencies & Core PHP Extensions
 RUN apt-get update && apt-get install -y \
     libpng-dev libjpeg-dev libfreetype6-dev zip unzip git libzip-dev libpq-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
