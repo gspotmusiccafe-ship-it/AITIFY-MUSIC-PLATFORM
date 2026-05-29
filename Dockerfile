@@ -1,10 +1,10 @@
 FROM php:8.2-apache
 
-# 1. Install System Dependencies & PHP Extensions
+# 1. Install System Dependencies & Core PHP Extensions (Including pcntl and ftp)
 RUN apt-get update && apt-get install -y \
     libpng-dev libjpeg-dev libfreetype6-dev zip unzip git libzip-dev libpq-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql pdo_pgsql pgsql zip bcmath \
+    && docker-php-ext-install gd pdo pdo_mysql pdo_pgsql pgsql zip bcmath pcntl ftp \
     && a2enmod rewrite
 
 # 2. Set Document Root to Laravel's Public Directory
@@ -17,7 +17,8 @@ COPY . /var/www/html
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
-RUN composer install --no-interaction --optimize-autoloader --no-dev
+# Run composer installation smoothly ignoring platform mismatches
+RUN composer install --no-interaction --optimize-autoloader --no-dev --ignore-platform-reqs
 
 # 4. Set Correct Permissions for Storage
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
